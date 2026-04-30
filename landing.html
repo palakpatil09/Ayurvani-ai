@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ayurvani</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #0f1e1f;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── Slide stage ── */
+    #stage {
+      display: flex;
+      width: 200vw;
+      height: 100vh;
+      transform: translateX(0);
+      transition: transform 750ms cubic-bezier(0.77, 0, 0.18, 1);
+    }
+    #stage.shifted { transform: translateX(-50%); }
+
+    /* ── Landing panel ── */
+    #landing {
+      width: 100vw; height: 100vh; flex-shrink: 0;
+      background: url('https://i.pinimg.com/1200x/00/18/fc/0018fc7897c0e053eb520a725ac576c2.jpg') center center / cover no-repeat;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .bottom-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 6vw 4.5vh;
+    }
+
+    .left h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      font-weight: 600;
+      color: #288A8E;
+      letter-spacing: 0.01em;
+      line-height: 1.1;
+    }
+
+    .left p {
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      color: #CBAA8B;
+      margin-top: 0.55rem;
+      line-height: 1.65;
+      max-width: 38ch;
+    }
+
+    /* ── CTA / primary buttons — glow on hover ── */
+    .cta {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #DAC4AE;
+      background: transparent;
+      border: 1.5px solid #CBAA8B;
+      padding: 0.65rem 1.8rem;
+      min-height: 44px;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: color 0.2s, border-color 0.2s, box-shadow 0.3s ease;
+    }
+    .cta:hover {
+      color: #fff;
+      border-color: #8DBFC3;
+      box-shadow: 0 0 14px rgba(40, 138, 142, 0.7), 0 0 28px rgba(40, 138, 142, 0.35);
+    }
+
+    /* ── Main panel ── */
+    #main {
+      width: 100vw; height: 100vh; flex-shrink: 0;
+      background: #0f1e1f;
+      overflow-y: auto;
+      padding: 5vh 6vw 8vh;
+    }
+
+    .main-header { margin-bottom: 5vh; }
+    .main-header h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 600;
+      color: #288A8E;
+      letter-spacing: 0.01em;
+    }
+    .main-header span {
+      display: block;
+      font-size: 0.82rem;
+      color: #65A9AA;
+      margin-top: 0.35rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── Four components ── */
+    .component { margin-bottom: 4.5vh; }
+
+    .comp-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #65A9AA;
+      margin-bottom: 0.9rem;
+    }
+
+    /* Text input */
+    .text-comp input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #2a5052;
+      color: #DAC4AE;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      padding: 0.5rem 0 0.6rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .text-comp input::placeholder { color: #3a6060; }
+    .text-comp input:focus { border-bottom-color: #288A8E; }
+
+    /* Inline action links */
+    .comp-action {
+      margin-top: 1.1rem;
+      display: inline-block;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #288A8E;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      min-height: 44px;
+      line-height: 44px;
+      transition: color 0.2s, text-shadow 0.3s ease;
+    }
+    .comp-action:hover {
+      color: #8DBFC3;
+      text-shadow: 0 0 10px rgba(101, 169, 170, 0.6);
+    }
+
+    /* Divider */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #1a3435;
+      margin-bottom: 4.5vh;
+    }
+
+    /* Image component */
+    .image-comp .drop-zone {
+      width: 100%;
+      padding: 2rem 0;
+      border-bottom: 1px solid #2a5052;
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      cursor: pointer;
+    }
+    .drop-icon { width: 36px; height: 36px; opacity: 0.45; flex-shrink: 0; }
+    .drop-text { font-size: 0.9rem; color: #3a6060; font-weight: 300; }
+    .drop-text strong { color: #65A9AA; font-weight: 500; }
+    #file-input { display: none; }
+
+    /* Speech component */
+    .speech-comp .mic-row {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid #2a5052;
+    }
+    .mic-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid #2a5052;
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.3s ease;
+    }
+    .mic-btn:hover {
+      border-color: #288A8E;
+      background: #132526;
+      box-shadow: 0 0 14px rgba(40, 138, 142, 0.7), 0 0 28px rgba(40, 138, 142, 0.35);
+    }
+    .mic-btn.recording { border-color: #CBAA8B; background: #1a2e2e; }
+    .mic-btn svg { width: 18px; height: 18px; }
+    .mic-status { font-size: 0.88rem; color: #3a6060; font-weight: 300; }
+    .mic-status.active { color: #CBAA8B; }
+
+    /* Location component */
+    .location-comp .loc-row {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid #2a5052;
+    }
+    .loc-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #288A8E;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      padding: 0;
+      min-height: 44px;
+      line-height: 44px;
+      transition: color 0.2s, text-shadow 0.3s ease;
+    }
+    .loc-btn:hover {
+      color: #8DBFC3;
+      text-shadow: 0 0 10px rgba(101, 169, 170, 0.6);
+    }
+    .loc-status { font-size: 0.85rem; color: #3a6060; font-weight: 300; }
+    .loc-status.found { color: #65A9AA; }
+
+    /* ── Remedy result — Phase 4 compact spacing ── */
+    .remedy-result {
+      margin-top: 1.4rem;
+      color: #DAC4AE;
+      font-size: clamp(0.85rem, 1.3vw, 0.93rem);
+      line-height: 1.6;
+    }
+    .remedy-result p {
+      margin-bottom: 0.5rem;
+    }
+    .remedy-result p:last-child { margin-bottom: 0; }
+    .remedy-result .r-heading {
+      font-size: clamp(0.88rem, 1.4vw, 0.97rem);
+      font-weight: 500;
+      color: #8DBFC3;
+      margin-top: 0.85rem;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.03em;
+    }
+    .remedy-result .r-heading:first-child { margin-top: 0; }
+
+    /* ── Mobile responsiveness — Phase 6 ── */
+    @media (max-width: 768px) {
+      html, body { overflow: hidden; }
+
+      .bottom-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 0 6vw 6vh;
+        gap: 1.6rem;
+      }
+      .left p { max-width: 100%; }
+
+      #main {
+        padding: 4vh 4vw 10vh;
+      }
+
+      .main-header { margin-bottom: 4vh; }
+
+      .text-comp input { font-size: 0.95rem; }
+
+      .drop-zone { padding: 1.4rem 0; }
+
+      .remedy-result {
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- Landing -->
+  <div id="landing">
+    <div class="bottom-row">
+      <div class="left">
+        <h1>Ayurvani</h1>
+        <p>Discover time-honoured Ayurvedic remedies tailored to your symptoms.<br>Ancient wisdom, made accessible for everyday healing.</p>
+      </div>
+      <div class="right">
+        <button class="cta" id="enter-btn">Get Ayurvedic Remedy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main app -->
+  <div id="main">
+    <div class="main-header">
+      <h2>Ayurvani</h2>
+      <span>Tell us what you're experiencing</span>
+    </div>
+
+    <!-- 1 · Text Input -->
+    <div class="component text-comp">
+      <div class="comp-label">Describe your symptoms</div>
+      <input type="text" id="symptom-input" placeholder="e.g. persistent headache, bloating after meals, dry skin…" />
+      <button class="comp-action" id="text-submit">Get Remedy →</button>
+      <div class="remedy-result" id="text-result" style="display:none"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 2 · Image Analysis -->
+    <div class="component image-comp">
+      <div class="comp-label">Upload an image</div>
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="#65A9AA" stroke-width="1.4">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <div class="drop-text"><strong>Choose a photo</strong> or drag it here — tongue, skin, eyes</div>
+      </div>
+      <input type="file" id="file-input" accept="image/*" />
+      <button class="comp-action" id="image-submit" style="display:none">Analyse Image →</button>
+      <div class="remedy-result" id="image-result" style="display:none"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 3 · Speech Input -->
+    <div class="component speech-comp">
+      <div class="comp-label">Speak your symptoms</div>
+      <div class="mic-row">
+        <button class="mic-btn" id="mic-btn" title="Tap to record">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#65A9AA" stroke-width="1.6">
+            <rect x="9" y="2" width="6" height="11" rx="3"/>
+            <path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="8" y1="22" x2="16" y2="22"/>
+          </svg>
+        </button>
+        <span class="mic-status" id="mic-status">Tap to start recording</span>
+      </div>
+      <button class="comp-action" id="speech-submit" style="display:none">Get Remedy →</button>
+      <div class="remedy-result" id="speech-result" style="display:none"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 4 · Location -->
+    <div class="component location-comp">
+      <div class="comp-label">Find nearby Ayurvedic stores</div>
+      <div class="loc-row">
+        <button class="loc-btn" id="loc-btn">Find Stores</button>
+        <span class="loc-status" id="loc-status">Not detected</span>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /stage -->
+
+<script>
+  // ── Slide transition ──
+  document.getElementById('enter-btn').addEventListener('click', () => {
+    document.getElementById('stage').classList.add('shifted');
+  });
+
+  // ── Remedy renderer: parses plain text into compact headed sections ──
+  function renderRemedy(text, container) {
+    const lines = text.split('\n').filter(l => l.trim());
+    let html = '';
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      // Lines ending with ':' or all-caps short lines treated as headings
+      if (/^[A-Z][^a-z]{0,40}:$/.test(trimmed) || /^[A-Z ]{4,}:$/.test(trimmed)) {
+        html += `<div class="r-heading">${trimmed.replace(/:$/, '')}</div>`;
+      } else {
+        html += `<p>${trimmed}</p>`;
+      }
+    });
+    container.innerHTML = html;
+    container.style.display = 'block';
+  }
+
+  // ── Text submit (stub — wire to backend) ──
+  document.getElementById('text-submit').addEventListener('click', () => {
+    const val = document.getElementById('symptom-input').value.trim();
+    if (!val) return;
+    const result = document.getElementById('text-result');
+    result.innerHTML = '<p style="color:#3a6060">Finding remedy…</p>';
+    result.style.display = 'block';
+    // Replace below with actual API call
+    setTimeout(() => {
+      renderRemedy(
+        `Ayurvedic Assessment:\nThis points to a Vata imbalance (Vata Prakopa) — meaning the air and space elements in your body are elevated, causing dryness, irregularity, and nervous tension.\n\nPrimary Herbs:\nAshwagandha: Calms the nervous system and restores energy — take ½ tsp powder in warm milk at night.\nTriphala: Gently cleanses and regulates digestion — ½ tsp in warm water before bed.\nBrahmi: Supports mental clarity and reduces anxiety — 2 capsules or ½ tsp in ghee daily.\n\nDiet Guidance:\nFoods to eat: Warm soups, ghee, sesame oil, cooked root vegetables, warm milk.\nFoods to avoid: Raw salads, cold drinks, dry crackers, caffeine.\n\nDuration:\nFollow for 21 days. Expect improved sleep and digestion within the first week.`,
+        result
+      );
+    }, 1200);
+  });
+
+  // ── Image drop zone ──
+  const fileInput = document.getElementById('file-input');
+  const imageSubmit = document.getElementById('image-submit');
+  const dropZone = document.getElementById('drop-zone');
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) {
+      dropZone.querySelector('.drop-text').innerHTML = `<strong>${fileInput.files[0].name}</strong>`;
+      imageSubmit.style.display = 'inline-block';
+    }
+  });
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderBottomColor = '#288A8E'; });
+  dropZone.addEventListener('dragleave', () => { dropZone.style.borderBottomColor = ''; });
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.style.borderBottomColor = '';
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      dropZone.querySelector('.drop-text').innerHTML = `<strong>${file.name}</strong>`;
+      imageSubmit.style.display = 'inline-block';
+    }
+  });
+
+  imageSubmit.addEventListener('click', () => {
+    const result = document.getElementById('image-result');
+    result.innerHTML = '<p style="color:#3a6060">Analysing image…</p>';
+    result.style.display = 'block';
+    // Wire to backend image analysis here
+  });
+
+  // ── Mic toggle ──
+  const micBtn = document.getElementById('mic-btn');
+  const micStatus = document.getElementById('mic-status');
+  const speechSubmit = document.getElementById('speech-submit');
+  let recording = false;
+
+  micBtn.addEventListener('click', () => {
+    recording = !recording;
+    micBtn.classList.toggle('recording', recording);
+    if (recording) {
+      micStatus.textContent = 'Recording… tap again to stop';
+      micStatus.classList.add('active');
+    } else {
+      micStatus.textContent = 'Recording complete';
+      micStatus.classList.remove('active');
+      speechSubmit.style.display = 'inline-block';
+    }
+  });
+
+  speechSubmit.addEventListener('click', () => {
+    const result = document.getElementById('speech-result');
+    result.innerHTML = '<p style="color:#3a6060">Processing speech…</p>';
+    result.style.display = 'block';
+    // Wire to backend speech transcription + remedy here
+  });
+
+  // ── Location ──
+  document.getElementById('loc-btn').addEventListener('click', () => {
+    const status = document.getElementById('loc-status');
+    status.textContent = 'Detecting…';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        status.textContent = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+        status.classList.add('found');
+      },
+      () => { status.textContent = 'Permission denied'; }
+    );
+  });
+</script>
+</body>
+</html>
