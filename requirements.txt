@@ -1,0 +1,29 @@
+# Web framework
+streamlit
+
+# HTTP requests (Groq API + Overpass API)
+requests
+
+# Image handling (PIL)
+pillow
+
+# Whisper local speech-to-text
+openai-whisper
+ffmpeg-python
+
+# Audio recording
+sounddevice
+scipy
+
+# Image captioning (BLIP model)
+transformers
+torch
+
+# Environment variables
+python-dotenv
+
+# Geolocation in browser
+streamlit-js-eval
+
+# Numerical computing (required by whisper, sounddevice, transformers)
+numpy
